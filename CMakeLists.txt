@@ -11,7 +11,6 @@ link_libraries(${OPENGL_LIBRARY})
 
 include_directories("E:/OpenGL/include")
 
-
 LINK_DIRECTORIES("E:/OpenGL/lib")
 
 link_libraries(optimized glew32 glfw3 soil2)
