@@ -8,13 +8,22 @@ find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR})
 link_libraries(${OPENGL_LIBRARY})
 
-
-include_directories("E:/OpenGL/include")
-
-LINK_DIRECTORIES("E:/OpenGL/lib")
-
-link_libraries(optimized glew32 glfw3 soil2)
-link_libraries(debug glew32d glfw3d soil2d)
+IF (WIN32)
+    MESSAGE(STATUS "System is windows")
+    include_directories("E:/OpenGL/include")
+    LINK_DIRECTORIES("E:/OpenGL/lib")
+    link_libraries(optimized glew32 glfw3 soil2)
+    link_libraries(debug glew32d glfw3d soil2d)
+ELSEIF (APPLE)
+    MESSAGE(STATUS "System is Apple.")
+    include_directories("/usr/local/Cellar/glew/2.2.0_1/include")
+    include_directories("/usr/local/Cellar/glfw/3.3.3/include")
+    link_directories("/usr/local/Cellar/glew/2.2.0_1/lib")
+    link_directories("/usr/local/Cellar/glfw/3.3.3/lib")
+    link_libraries(${OPENGL_LIBRARY} GLEW glfw)
+ELSEIF (UNIX)
+    MESSAGE(STATUS "System is UNIX-like.")
+ENDIF ()
 
 add_executable(bound_ball main.cpp vertShader.glsl fragShader.glsl)
 
