@@ -83,7 +83,7 @@ bool GLBase::GLInit()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
-	window = glfwCreateWindow(600, 480, "Bounding Ball", nullptr, nullptr);
+	window = glfwCreateWindow(1280, 960, "Bounding Ball", nullptr, nullptr);
 	if (window == NULL)
 	{
 		glfwTerminate();

@@ -9,6 +9,7 @@ int main()
 
 	ball.Render();
 
+	std::cout << "ok." << std::endl;
 
 	return 0;
 }

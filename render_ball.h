@@ -39,37 +39,18 @@ public:
 	{
 		
 	}
-	~Ball()
+	virtual ~Ball()
 	{
 
 	}
 
-	void Render()
+	virtual void Render()
 	{
-		//while (!glfwWindowShouldClose(window))
-		//{
-		//	/* Render here */
-		//	glClear(GL_COLOR_BUFFER_BIT);
-
-		//	glUseProgram(shader_program);
-		//	glBindVertexArray(vao);
-
-		//	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-		//	//glUniform4f(location, RandomNumber(0.0f, 1.0f), 1.0f, 0.0f, 1.0f);
-
-		//	/* Swap front and back buffers */
-		//	glfwSwapBuffers(window);
-
-		//	/* Poll for and process events */
-		//	glfwPollEvents();
-		//}
+		
 	}
-public:
-	/*unsigned int vao;
-	unsigned int buffer;
-	unsigned int ibo;
-	unsigned int shader_program;*/
+
+private:
+
 };
 
 
