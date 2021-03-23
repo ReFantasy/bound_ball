@@ -15,8 +15,12 @@ int main()
 {
 	Ball ball;
 
-	ball.Render();
-
+	bool continue_render = true;
+	while (continue_render)
+	{
+		continue_render = ball.Render();
+	}
+	
 	std::cout << "ok." << std::endl;
 
 	return 0;

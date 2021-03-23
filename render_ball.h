@@ -20,7 +20,7 @@ public:
 		glfwTerminate();
 	}
 
-	virtual void Render() = 0;
+	virtual bool Render() = 0;
 
 	GLFWwindow* window = nullptr;
 
@@ -39,7 +39,7 @@ public:
 		glDeleteProgram(shader_program);
 	}
 
-	virtual void Render();
+	virtual bool Render();
 
 private:
 	unsigned int vao;

@@ -104,14 +104,16 @@ bool GLBase::GLInit()
 }
 
 
+#define SQRT(x) std::sqrt(x)
 
 Ball::Ball()
 {
-	float vertexPositions[9] =
+	float a = 1.0;
+	float vertexPositions[12] =
 	{
-		-0.5f,-0.5f,0.0f,
-		 0.5f,-0.5f,0.0f,
-		 0.0f, 0.5f,0.0f
+		-SQRT(3) / 2.0 * a, -a / 2, 0.0f, 0.0f,
+		 SQRT(3) / 2.0 * a, -a / 2, 0.0f, 1.0f,
+		              0.0f,      a, 0.0f, 2.0f
 	};
 
 	glGenVertexArrays(1, &vao);
@@ -122,7 +124,9 @@ Ball::Ball()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(3*sizeof(float)));
 
 
 	std::string vertex_shader = ReadShaderFile("F:/Simulation/bound_ball/vertShader.glsl");
@@ -136,7 +140,7 @@ Ball::Ball()
 	mMat = glm::mat4(1.0f);
 	
 
-	cameraX = 0.0f; cameraY = 0.0f; cameraZ = 6.0f;
+	cameraX = 0.0f; cameraY = 0.0f; cameraZ = 3.0f;
 	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
 
 	int width, height;
@@ -145,16 +149,18 @@ Ball::Ball()
 	pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
 }
 
-void Ball::Render()
+bool Ball::Render()
 {
-	while (!glfwWindowShouldClose(window))
+	if (!glfwWindowShouldClose(window))
 	{
-		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shader_program);
+
+
 		auto mv_loc = glGetUniformLocation(shader_program, "mv_matrix");
 		auto proj_loc = glGetUniformLocation(shader_program, "proj_matrix");
+		mMat = glm::rotate(mMat, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(mv_loc, 1, GL_FALSE, glm::value_ptr(vMat * mMat));
 		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(pMat));
 
@@ -162,10 +168,10 @@ void Ball::Render()
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
-
-		/* Poll for and process events */
 		glfwPollEvents();
+		return true;
 	}
+	return false;
 }
+
