@@ -157,7 +157,7 @@ Ball::Ball()
 	
 	// ≥ı ºªØ m v p æÿ’Û
 	mMat = glm::mat4(1.0f);
-	mMat = glm::scale(mMat, glm::vec3(0.5,0.5,0.5));
+	//mMat = glm::scale(mMat, glm::vec3(0.5,0.5,0.5));
 
 	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
 
