@@ -168,6 +168,7 @@ Ball::Ball()
 	pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
 
 
+
 	// ¼ÓÔØ×ÅÉ«Æ÷
 	std::string vertex_shader = ReadShaderFile("F:/Simulation/bound_ball/vertShader.glsl");
 	std::string fragment_shader = ReadShaderFile("F:/Simulation/bound_ball/fragShader.glsl");
