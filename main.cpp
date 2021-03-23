@@ -10,7 +10,6 @@ int main()
 
     std::cout<<glfwGetVersionString()<<std::endl;
 
-
     if(glewInit()!=GLEW_OK)
     {
         std::cout<<"error"<<std::endl;
