@@ -13,16 +13,12 @@ glm::mat4 pMat, vMat, mMat;
 
 int main()
 {
-
 	Ball ball;
-
-
 
 	ball.Render();
 
 	std::cout << "ok." << std::endl;
 
-	GL_TRIANGLE_FAN;
 	return 0;
 }
 
