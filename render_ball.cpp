@@ -155,7 +155,6 @@ Ball::Ball()
 	/*glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, earthTexture);*/
 	
-
 	// ≥ı ºªØ m v p æÿ’Û
 	mMat = glm::mat4(1.0f);
 	mMat = glm::scale(mMat, glm::vec3(0.5,0.5,0.5));
@@ -176,8 +175,6 @@ Ball::Ball()
 	shader_program = CreateShaderProgram(vertex_shader, fragment_shader);
 
 	glUseProgram(shader_program);
-
-	
 }
 
 bool Ball::Render()
