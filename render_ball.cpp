@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <fstream>
 
+
 void glfw_error_callback(int error, const char* description)
 {
 	fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -104,3 +105,67 @@ bool GLBase::GLInit()
 
 
 
+Ball::Ball()
+{
+	float vertexPositions[9] =
+	{
+		-0.5f,-0.5f,0.0f,
+		 0.5f,-0.5f,0.0f,
+		 0.0f, 0.5f,0.0f
+	};
+
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+
+
+	std::string vertex_shader = ReadShaderFile("F:/Simulation/bound_ball/vertShader.glsl");
+	std::string fragment_shader = ReadShaderFile("F:/Simulation/bound_ball/fragShader.glsl");
+
+	shader_program = CreateShaderProgram(vertex_shader, fragment_shader);
+
+	glUseProgram(shader_program);
+
+	// m v p
+	mMat = glm::mat4(1.0f);
+	
+
+	cameraX = 0.0f; cameraY = 0.0f; cameraZ = 6.0f;
+	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
+
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+	auto aspect = (float)width / (float)height;
+	pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
+}
+
+void Ball::Render()
+{
+	while (!glfwWindowShouldClose(window))
+	{
+		/* Render here */
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		glUseProgram(shader_program);
+		auto mv_loc = glGetUniformLocation(shader_program, "mv_matrix");
+		auto proj_loc = glGetUniformLocation(shader_program, "proj_matrix");
+		glUniformMatrix4fv(mv_loc, 1, GL_FALSE, glm::value_ptr(vMat * mMat));
+		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(pMat));
+
+		glBindVertexArray(vao);
+
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		/* Swap front and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process events */
+		glfwPollEvents();
+	}
+}
