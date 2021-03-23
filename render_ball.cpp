@@ -84,6 +84,7 @@ bool GLBase::GLInit()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 
 	window = glfwCreateWindow(1280, 960, "Bounding Ball", nullptr, nullptr);
@@ -110,7 +111,6 @@ bool GLBase::GLInit()
 
 Ball::Ball()
 {
-	// 创建球模型顶点数据
 	auto mySphere = Sphere(48);
 	triangle_size = mySphere.getNumIndices();
 	std::vector<int> ind = mySphere.getIndices();
@@ -137,7 +137,6 @@ Ball::Ball()
 	glBindVertexArray(vao);
 	glGenBuffers(3, vbo);
 
-	// 绑定顶点属性
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glBufferData(GL_ARRAY_BUFFER, pvalues.size() * 4, &pvalues[0], GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -155,7 +154,7 @@ Ball::Ball()
 	/*glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, earthTexture);*/
 	
-	// 初始化 m v p 矩阵
+
 	mMat = glm::mat4(1.0f);
 	//mMat = glm::scale(mMat, glm::vec3(0.5,0.5,0.5));
 
@@ -167,8 +166,6 @@ Ball::Ball()
 	pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
 
 
-
-	// 加载着色器
 	std::string vertex_shader = ReadShaderFile("F:/Simulation/bound_ball/vertShader.glsl");
 	std::string fragment_shader = ReadShaderFile("F:/Simulation/bound_ball/fragShader.glsl");
 
@@ -181,20 +178,17 @@ bool Ball::Render()
 {
 	if (!glfwWindowShouldClose(window))
 	{
-		// 清除缓存
+
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// 使用着色器
 		glUseProgram(shader_program);
 
-		// 设置模型变换矩阵
 		auto mv_loc = glGetUniformLocation(shader_program, "mv_matrix");
 		auto proj_loc = glGetUniformLocation(shader_program, "proj_matrix");
 		mMat = glm::rotate(mMat, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(mv_loc, 1, GL_FALSE, glm::value_ptr(vMat * mMat));
 		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(pMat));
 
-		// 绘制模型
 		glBindVertexArray(vao);
 
 		glEnable(GL_CULL_FACE);
