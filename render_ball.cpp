@@ -1,6 +1,8 @@
 #include "render_ball.h"
 #include <stdio.h>
 #include <fstream>
+#include <vector>
+#include "Sphere.h"
 
 
 void glfw_error_callback(int error, const char* description)
@@ -108,27 +110,65 @@ bool GLBase::GLInit()
 
 Ball::Ball()
 {
-	float a = 1.0;
-	float vertexPositions[12] =
-	{
-		-SQRT(3) / 2.0 * a, -a / 2, 0.0f, 0.0f,
-		 SQRT(3) / 2.0 * a, -a / 2, 0.0f, 1.0f,
-		              0.0f,      a, 0.0f, 2.0f
-	};
+	// 创建球模型顶点数据
+	auto mySphere = Sphere(48);
+	triangle_size = mySphere.getNumIndices();
+	std::vector<int> ind = mySphere.getIndices();
+	std::vector<glm::vec3> vert = mySphere.getVertices();
+	std::vector<glm::vec2> tex = mySphere.getTexCoords();
+	std::vector<glm::vec3> norm = mySphere.getNormals();
 
+	std::vector<float> pvalues;
+	std::vector<float> tvalues;
+	std::vector<float> nvalues;
+
+	int numIndices = mySphere.getNumIndices();
+	for (int i = 0; i < numIndices; i++) {
+		pvalues.push_back((vert[ind[i]]).x);
+		pvalues.push_back((vert[ind[i]]).y);
+		pvalues.push_back((vert[ind[i]]).z);
+		tvalues.push_back((tex[ind[i]]).s);
+		tvalues.push_back((tex[ind[i]]).t);
+		nvalues.push_back((norm[ind[i]]).x);
+		nvalues.push_back((norm[ind[i]]).y);
+		nvalues.push_back((norm[ind[i]]).z);
+	}
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
+	glGenBuffers(3, vbo);
 
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
-
+	// 绑定顶点属性
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, pvalues.size() * 4, &pvalues[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glBufferData(GL_ARRAY_BUFFER, tvalues.size() * 4, &tvalues[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(3*sizeof(float)));
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+	glBufferData(GL_ARRAY_BUFFER, nvalues.size() * 4, &nvalues[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(2);
+	/*glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, earthTexture);*/
+	
+
+	// 初始化 m v p 矩阵
+	mMat = glm::mat4(1.0f);
+	mMat = glm::scale(mMat, glm::vec3(0.5,0.5,0.5));
+
+	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
+
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+	auto aspect = (float)width / (float)height;
+	pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
 
 
+	// 加载着色器
 	std::string vertex_shader = ReadShaderFile("F:/Simulation/bound_ball/vertShader.glsl");
 	std::string fragment_shader = ReadShaderFile("F:/Simulation/bound_ball/fragShader.glsl");
 
@@ -136,37 +176,32 @@ Ball::Ball()
 
 	glUseProgram(shader_program);
 
-	// m v p
-	mMat = glm::mat4(1.0f);
 	
-
-	cameraX = 0.0f; cameraY = 0.0f; cameraZ = 3.0f;
-	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
-
-	int width, height;
-	glfwGetFramebufferSize(window, &width, &height);
-	auto aspect = (float)width / (float)height;
-	pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
 }
 
 bool Ball::Render()
 {
 	if (!glfwWindowShouldClose(window))
 	{
+		// 清除缓存
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		// 使用着色器
 		glUseProgram(shader_program);
 
-
+		// 设置模型变换矩阵
 		auto mv_loc = glGetUniformLocation(shader_program, "mv_matrix");
 		auto proj_loc = glGetUniformLocation(shader_program, "proj_matrix");
 		mMat = glm::rotate(mMat, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		glUniformMatrix4fv(mv_loc, 1, GL_FALSE, glm::value_ptr(vMat * mMat));
 		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(pMat));
 
+		// 绘制模型
 		glBindVertexArray(vao);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glEnable(GL_CULL_FACE);
+		glFrontFace(GL_CCW);
+		glDrawArrays(GL_TRIANGLES, 0, triangle_size);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

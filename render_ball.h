@@ -7,6 +7,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
+#include "Sphere.h"
+
 
 class GLBase
 {
@@ -43,12 +45,14 @@ public:
 
 private:
 	unsigned int vao;
-	unsigned int vbo;
+	unsigned int vbo[3];
 	unsigned int shader_program;
 
 private:
-	float cameraX = 0.0f, cameraY = 0.0f, cameraZ = 0.0f;
+	float cameraX = 0.0f, cameraY = 0.0f, cameraZ = 7.0f;
 	glm::mat4 pMat, vMat, mMat;
+	//Sphere mySphere;
+	int triangle_size = 0;
 
 };
 
