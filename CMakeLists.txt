@@ -28,5 +28,5 @@ ELSEIF (UNIX)
     link_libraries(${OPENGL_LIBRARY} GLEW glfw)
 ENDIF ()
 
-add_executable(bound_ball main.cpp vertShader.glsl fragShader.glsl)
+add_executable(bound_ball main.cpp render_ball.h render_ball.cpp vertShader.glsl fragShader.glsl)
 
