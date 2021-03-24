@@ -48,7 +48,7 @@ int main()
 {
 	Renderer ball;
 
-	Eigen::Vector3f wind_velocity{ 0.3,0,0 };      // Wind speed
+	Eigen::Vector3f wind_velocity{ 0.0,0,0 };      // Wind speed
 	float arc = 0.4f;                        // Air Resistance coefficient
 	float ball_mass = 0.01f;                         // weight of ball
 
