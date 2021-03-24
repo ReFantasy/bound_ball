@@ -64,7 +64,6 @@ private:
 private:
 	float cameraX = 0.0f, cameraY = 10.0f, cameraZ = 14.0f;
 	glm::mat4 pMat, vMat;
-	//int triangle_size = 0;
 };
 
 
