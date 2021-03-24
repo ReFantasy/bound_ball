@@ -46,19 +46,16 @@ S s;                       // initial position and velocity
 
 int main()
 {
+	Renderer ball;
 
-
-
-	Ball ball;
-
-	Eigen::Vector3f wind_velocity{ 1,0,0 };      // Wind speed
+	Eigen::Vector3f wind_velocity{ 0.3,0,0 };      // Wind speed
 	float arc = 0.4f;                        // Air Resistance coefficient
 	float ball_mass = 0.01f;                         // weight of ball
 
 
 	while (t < t_max)
 	{
-		printf("current speed: %.4f,%.4f,%.4f\n", s.velocity.x(), s.velocity.y(), s.velocity.z());
+		//printf("current speed: %.4f,%.4f,%.4f\n", s.velocity.x(), s.velocity.y(), s.velocity.z());
 		if (!ball.Render(glm::vec3(s.position.x(), s.position.y(), s.position.z()))) break;
 
 		float TimestepRemaining = h;

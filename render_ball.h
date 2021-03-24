@@ -32,11 +32,11 @@ private:
 
 };
 
-class Ball:public GLBase
+class Renderer:public GLBase
 {
 public:
-	Ball();
-	virtual ~Ball()
+	Renderer();
+	virtual ~Renderer()
 	{
 		glDeleteProgram(shader_program_sphere);
 	}
@@ -44,14 +44,25 @@ public:
 	virtual bool Render(glm::vec3);
 
 private:
+	void InitBall();
+	void RenderBall(glm::vec3 new_x);
+
+	void InitGround();
+	void RenderGround();
+
+private:
 	unsigned int vao_sphere;
 	unsigned int vbo_sphere[3];
 	unsigned int shader_program_sphere;
 
+	unsigned int vao_ground;
+	unsigned int vbo_ground;
+	unsigned int shader_program_ground;
+
 private:
 	float cameraX = 0.0f, cameraY = 0.0f, cameraZ = 14.0f;
 	glm::mat4 pMat, vMat, mMat;
-	int triangle_size = 0;
+	//int triangle_size = 0;
 };
 
 

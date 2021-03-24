@@ -31,5 +31,5 @@ ENDIF ()
 
 
 add_executable(bound_ball main.cpp render_ball.h render_ball.cpp Sphere.h Sphere.cpp glhelper.h glhelper.cpp 
-               ./shader/vertShader.glsl ./shader/fragShader.glsl)
+               ./shader/sphere_vert_shader.glsl ./shader/sphere_frag_shader.glsl ./shader/ground_vert_shader.glsl ./shader/ground_frag_shader.glsl)
 
