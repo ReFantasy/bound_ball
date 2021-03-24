@@ -17,14 +17,21 @@ struct S
 
 bool CollisionBetween(S s_old, S s_new)
 {
-	return false;
+	if (s_new.position.y() < 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 
 S CollisionResponse(S s_new)
 {
 	// just revert velocity
-	s_new.velocity = -s_new.position;
+	s_new.velocity = -s_new.velocity;
 	return s_new;
 }
 
@@ -46,16 +53,29 @@ S s;                       // initial position and velocity
 
 int main()
 {
-	Renderer ball;
+	
 
+	s.position = Eigen::Vector3f{ 0.0,10.0,-7.0 };
+	//s.velocity = Eigen::Vector3f{ 1.0,-2.0,0.0 };
 	Eigen::Vector3f wind_velocity{ 0.0,0,0 };      // Wind speed
-	float arc = 0.4f;                        // Air Resistance coefficient
-	float ball_mass = 0.01f;                         // weight of ball
+	float arc = 0.4f;                              // Air Resistance coefficient
+	float ball_mass = 1.1f;                        // weight of ball
 
+	Eigen::Vector3f ground_normal{ 0,1,0 };
+	Eigen::Vector3f ground_point{ 1,0,0 };
+
+	/*auto vn = s.velocity.dot(ground_normal) * ground_normal;
+	auto vt = s.velocity-vn;
+	std::cout << vn << std::endl;
+	std::cout << vt << std::endl;*/
+
+	//std::cin.get();
+
+	Renderer ball;
 
 	while (t < t_max)
 	{
-		//printf("current speed: %.4f,%.4f,%.4f\n", s.velocity.x(), s.velocity.y(), s.velocity.z());
+		printf("current speed: %.4f,%.4f,%.4f\n", s.velocity.x(), s.velocity.y(), s.velocity.z());
 		if (!ball.Render(glm::vec3(s.position.x(), s.position.y(), s.position.z()))) break;
 
 		float TimestepRemaining = h;

@@ -62,8 +62,8 @@ private:
 	unsigned int texture_ground;
 
 private:
-	float cameraX = 0.0f, cameraY = 0.0f, cameraZ = 14.0f;
-	glm::mat4 pMat, vMat, mMat;
+	float cameraX = 0.0f, cameraY = 10.0f, cameraZ = 14.0f;
+	glm::mat4 pMat, vMat;
 	//int triangle_size = 0;
 };
 

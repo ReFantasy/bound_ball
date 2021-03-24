@@ -53,14 +53,11 @@ Renderer::Renderer()
 	InitBall();
 	InitGround();
 
-
 	/*
 	 *
 	 * init m v p transformation
 	 *
 	 */
-	mMat = glm::mat4(1.0f);
-	//mMat = glm::scale(mMat, glm::vec3(0.5,0.5,0.5));
 
 	vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
 
@@ -139,7 +136,9 @@ void Renderer::RenderBall(glm::vec3 new_x)
 
 	static glm::mat4 rmat = glm::mat4(1.0f);
 	//rmat = glm::rotate(rmat, glm::radians(0.5f), glm::vec3(0.0f, 0.0f, 1.0f));
-	mMat = glm::translate(glm::mat4(1.0f), new_x);
+
+	static glm::mat4 mMat;
+	mMat = glm::translate(glm::mat4(1.0f), new_x); // Position of the ball comes from extern parameter
 
 	glUniformMatrix4fv(mv_loc, 1, GL_FALSE, glm::value_ptr(vMat * mMat*rmat));
 	glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(pMat));
@@ -155,8 +154,8 @@ void Renderer::RenderBall(glm::vec3 new_x)
 
 void Renderer::InitGround()
 {
-	float c = 1000;
-	float height = -100.0f;
+	float c = 10;
+	float height = 0.0f;
 
 	float ground_position[] = {
 		-c, height,c,
@@ -220,9 +219,9 @@ void Renderer::RenderGround()
 	auto mv_loc = glGetUniformLocation(shader_program_ground, "mv_matrix");
 	auto proj_loc = glGetUniformLocation(shader_program_ground, "proj_matrix");
 
-	auto m_mat_ground = glm::mat4(1.0);
+	static glm::mat4 mMat = glm::mat4(1.0);
 
-	glUniformMatrix4fv(mv_loc, 1, GL_FALSE, glm::value_ptr(vMat * m_mat_ground));
+	glUniformMatrix4fv(mv_loc, 1, GL_FALSE, glm::value_ptr(vMat * mMat));
 	glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(pMat));
 
 	glBindVertexArray(vao_ground);
@@ -241,10 +240,8 @@ bool Renderer::Render(glm::vec3 new_x)
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		
 		RenderBall(new_x);
 
-		
 		RenderGround();
 
 		glfwSwapBuffers(window);
