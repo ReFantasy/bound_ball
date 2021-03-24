@@ -1,9 +1,10 @@
-#version 410
+#version 460
 
-
+in vec2 tc;
 out vec4 color;
-in vec4 c;
+
+layout (binding=0) uniform sampler2D s;
 void main(void)
 {	
-    color = c;
+    color = texture(s,tc);
 }

@@ -1,11 +1,31 @@
 #include "glhelper.h"
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 #include <GL/glew.h>
+#include "SOIL2/SOIL2.h"
 
 void glfw_error_callback(int error, const char* description)
 {
 	fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+}
+
+unsigned int LoadTexture(const char* iamge_path)
+{
+	unsigned int texture_id;
+	texture_id = SOIL_load_OGL_texture(iamge_path, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_INVERT_Y);
+	if (texture_id == 0)
+	{
+		std::cout << "could not find texture file" << iamge_path << std::endl;
+	}
+	return texture_id;
+}
+
+std::filesystem::path CurrentPath()
+{
+	std::filesystem::path build_path = std::filesystem::current_path();
+	return build_path;
 }
 
 std::string ReadShaderFile(const char* file_path)

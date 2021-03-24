@@ -15,7 +15,7 @@ bool GLBase::GLInit()
 		return false;
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);;
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
@@ -113,8 +113,10 @@ void Renderer::InitBall()
 	glBufferData(GL_ARRAY_BUFFER, nvalues.size() * 4, &nvalues[0], GL_STATIC_DRAW);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(2);
-	/*glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, earthTexture);*/
+
+	texture_sphere = LoadTexture((CurrentPath().parent_path().string() + std::string("\\resource\\earth.jpg")).c_str());
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_sphere);
 
 
 	std::filesystem::path build_path = std::filesystem::current_path();
@@ -151,23 +153,51 @@ void Renderer::RenderBall(glm::vec3 new_x)
 
 void Renderer::InitGround()
 {
-	float c = 100000.0f;
+	float c = 1000;
 	float height = -100.0f;
 
 	float ground_position[] = {
-		-c, height,-c,
+		-c, height,c,
+		c,height,c,
 		c,height,-c,
-		0,height,c
+		-c,height,-c
+	};
+	float tvalue[] = {
+		0.0f,0.0f,
+		1.0f,0.0f,
+		1.0f,1.0f,
+		0.0f,1.0f,
+	};
+	unsigned int vert_index[] = {
+		0,1,2,
+		2,3,0
 	};
 
 	glGenVertexArrays(1, &vao_ground);
 	glBindVertexArray(vao_ground);
-	glGenBuffers(1, &vbo_ground);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_ground);
+	glGenBuffers(2, vbo_ground);
 
-	glBufferData(GL_ARRAY_BUFFER, 3 * 3 * sizeof(float), ground_position, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_ground[0]);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(float), ground_position, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_ground[1]);
+	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), tvalue, GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(1);
+
+	GLuint ibo;
+	glGenBuffers(1, &ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), vert_index, GL_STATIC_DRAW);
+
+
+
+	texture_ground = LoadTexture((CurrentPath().parent_path().string() + std::string("\\resource\\earth.jpg")).c_str());
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_ground);
+
 
 	std::filesystem::path build_path = std::filesystem::current_path();
 	std::filesystem::path shader_dir = build_path.parent_path().string() + ("\\shader");
@@ -194,9 +224,10 @@ void Renderer::RenderGround()
 
 	glBindVertexArray(vao_ground);
 
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_CCW);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	//glDisable(GL_CULL_FACE);
+	//glDisable(GL_CCW);
+	//glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }
 
 bool Renderer::Render(glm::vec3 new_x)
