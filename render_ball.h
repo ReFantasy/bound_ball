@@ -38,15 +38,15 @@ public:
 	Ball();
 	virtual ~Ball()
 	{
-		glDeleteProgram(shader_program);
+		glDeleteProgram(shader_program_sphere);
 	}
 
 	virtual bool Render(glm::vec3);
 
 private:
-	unsigned int vao;
-	unsigned int vbo[3];
-	unsigned int shader_program;
+	unsigned int vao_sphere;
+	unsigned int vbo_sphere[3];
+	unsigned int shader_program_sphere;
 
 private:
 	float cameraX = 0.0f, cameraY = 0.0f, cameraZ = 14.0f;

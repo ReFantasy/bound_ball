@@ -66,21 +66,21 @@ Ball::Ball()
 		nvalues.push_back((norm[ind[i]]).y);
 		nvalues.push_back((norm[ind[i]]).z);
 	}
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	glGenBuffers(3, vbo);
+	glGenVertexArrays(1, &vao_sphere);
+	glBindVertexArray(vao_sphere);
+	glGenBuffers(3, vbo_sphere);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_sphere[0]);
 	glBufferData(GL_ARRAY_BUFFER, pvalues.size() * 4, &pvalues[0], GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_sphere[1]);
 	glBufferData(GL_ARRAY_BUFFER, tvalues.size() * 4, &tvalues[0], GL_STATIC_DRAW);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(1);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_sphere[2]);
 	glBufferData(GL_ARRAY_BUFFER, nvalues.size() * 4, &nvalues[0], GL_STATIC_DRAW);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(2);
@@ -103,12 +103,12 @@ Ball::Ball()
 	std::filesystem::path build_path = std::filesystem::current_path();
 	std::filesystem::path shader_dir = build_path.parent_path().string() + ("\\shader");
 
-	std::string vertex_shader = ReadShaderFile(std::string( shader_dir.string()+std::string( "\\vertShader.glsl")).c_str());
-	std::string fragment_shader = ReadShaderFile(std::string(shader_dir.string() + std::string("\\fragShader.glsl")).c_str());
+	std::string vertex_shader = ReadShaderFile(std::string( shader_dir.string()+std::string( "\\sphere_vert_shader.glsl")).c_str());
+	std::string fragment_shader = ReadShaderFile(std::string(shader_dir.string() + std::string("\\sphere_frag_shader.glsl")).c_str());
 
-	shader_program = CreateShaderProgram(vertex_shader, fragment_shader);
+	shader_program_sphere = CreateShaderProgram(vertex_shader, fragment_shader);
 
-	glUseProgram(shader_program);
+	glUseProgram(shader_program_sphere);
 }
 
 bool Ball::Render(glm::vec3 new_x)
@@ -118,10 +118,10 @@ bool Ball::Render(glm::vec3 new_x)
 
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shader_program);
+		glUseProgram(shader_program_sphere);
 
-		auto mv_loc = glGetUniformLocation(shader_program, "mv_matrix");
-		auto proj_loc = glGetUniformLocation(shader_program, "proj_matrix");
+		auto mv_loc = glGetUniformLocation(shader_program_sphere, "mv_matrix");
+		auto proj_loc = glGetUniformLocation(shader_program_sphere, "proj_matrix");
 
 		mMat = glm::rotate(mMat, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		mMat = glm::translate(glm::mat4(1.0), new_x);
@@ -129,7 +129,7 @@ bool Ball::Render(glm::vec3 new_x)
 		glUniformMatrix4fv(mv_loc, 1, GL_FALSE, glm::value_ptr(vMat * mMat));
 		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(pMat));
 
-		glBindVertexArray(vao);
+		glBindVertexArray(vao_sphere);
 
 		glEnable(GL_CULL_FACE);
 		glFrontFace(GL_CCW);
