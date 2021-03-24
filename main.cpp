@@ -4,6 +4,7 @@
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <Eigen/Dense>
+#include <filesystem>
 
 
 Eigen::Vector3f g{ 0,-9.8,0 };//acceleration of gravity
@@ -45,6 +46,9 @@ S s;                       // initial position and velocity
 
 int main()
 {
+
+
+
 	Ball ball;
 
 	Eigen::Vector3f wind_velocity{ 1,0,0 };      // Wind speed

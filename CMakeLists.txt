@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(bound_ball)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
@@ -29,5 +29,7 @@ ELSEIF (UNIX)
     link_libraries(${OPENGL_LIBRARY} GLEW glfw)
 ENDIF ()
 
-add_executable(bound_ball main.cpp render_ball.h render_ball.cpp Sphere.h Sphere.cpp vertShader.glsl fragShader.glsl)
+
+add_executable(bound_ball main.cpp render_ball.h render_ball.cpp Sphere.h Sphere.cpp glhelper.h glhelper.cpp 
+               ./shader/vertShader.glsl ./shader/fragShader.glsl)
 
