@@ -137,13 +137,15 @@ void Renderer::RenderBall(glm::vec3 new_x)
 	auto mv_loc = glGetUniformLocation(shader_program_sphere, "mv_matrix");
 	auto proj_loc = glGetUniformLocation(shader_program_sphere, "proj_matrix");
 
-	mMat = glm::rotate(mMat, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	mMat = glm::translate(glm::mat4(1.0), new_x);
+	static glm::mat4 rmat = glm::mat4(1.0f);
+	//rmat = glm::rotate(rmat, glm::radians(0.5f), glm::vec3(0.0f, 0.0f, 1.0f));
+	mMat = glm::translate(glm::mat4(1.0f), new_x);
 
-	glUniformMatrix4fv(mv_loc, 1, GL_FALSE, glm::value_ptr(vMat * mMat));
+	glUniformMatrix4fv(mv_loc, 1, GL_FALSE, glm::value_ptr(vMat * mMat*rmat));
 	glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(pMat));
 
 	glBindVertexArray(vao_sphere);
+	glBindTexture(GL_TEXTURE_2D, texture_sphere);
 
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
@@ -194,9 +196,10 @@ void Renderer::InitGround()
 
 
 
-	texture_ground = LoadTexture((CurrentPath().parent_path().string() + std::string("\\resource\\earth.jpg")).c_str());
+	texture_ground = LoadTexture((CurrentPath().parent_path().string() + std::string("\\resource\\brick1.jpg")).c_str());
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_ground);
+	//glTexParameteri(texture_ground,GL_TEXTURE_WRAP_S, )
 
 
 	std::filesystem::path build_path = std::filesystem::current_path();
@@ -223,6 +226,7 @@ void Renderer::RenderGround()
 	glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(pMat));
 
 	glBindVertexArray(vao_ground);
+	glBindTexture(GL_TEXTURE_2D, texture_ground);
 
 	//glDisable(GL_CULL_FACE);
 	//glDisable(GL_CCW);
@@ -237,7 +241,10 @@ bool Renderer::Render(glm::vec3 new_x)
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
+		
 		RenderBall(new_x);
+
+		
 		RenderGround();
 
 		glfwSwapBuffers(window);
