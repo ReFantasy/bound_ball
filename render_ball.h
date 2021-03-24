@@ -22,7 +22,7 @@ public:
 		glfwTerminate();
 	}
 
-	virtual bool Render() = 0;
+	virtual bool Render(glm::vec3) = 0;
 
 	GLFWwindow* window = nullptr;
 
@@ -41,7 +41,7 @@ public:
 		glDeleteProgram(shader_program);
 	}
 
-	virtual bool Render();
+	virtual bool Render(glm::vec3);
 
 private:
 	unsigned int vao;
@@ -49,7 +49,7 @@ private:
 	unsigned int shader_program;
 
 private:
-	float cameraX = 0.0f, cameraY = 0.0f, cameraZ = 4.0f;
+	float cameraX = 0.0f, cameraY = 0.0f, cameraZ = 14.0f;
 	glm::mat4 pMat, vMat, mMat;
 	//Sphere mySphere;
 	int triangle_size = 0;

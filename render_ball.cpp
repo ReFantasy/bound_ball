@@ -174,7 +174,7 @@ Ball::Ball()
 	glUseProgram(shader_program);
 }
 
-bool Ball::Render()
+bool Ball::Render(glm::vec3 new_x)
 {
 	if (!glfwWindowShouldClose(window))
 	{
@@ -185,7 +185,10 @@ bool Ball::Render()
 
 		auto mv_loc = glGetUniformLocation(shader_program, "mv_matrix");
 		auto proj_loc = glGetUniformLocation(shader_program, "proj_matrix");
+
 		mMat = glm::rotate(mMat, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		mMat = glm::translate(glm::mat4(1.0), new_x);
+
 		glUniformMatrix4fv(mv_loc, 1, GL_FALSE, glm::value_ptr(vMat * mMat));
 		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(pMat));
 
