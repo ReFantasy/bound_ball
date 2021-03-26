@@ -94,7 +94,7 @@ int main()
 
 	s.position = Eigen::Vector3f{ 0.0,10.0,-7.0 };
 	s.velocity = Eigen::Vector3f{ 6.0,0.0,0.0 };
-	Eigen::Vector3f wind_velocity{ -6.0,0,0 };      // Wind speed
+	Eigen::Vector3f wind_velocity{ 0.0,0,0 };      // Wind speed
 	float arc = 0.4f;                              // Air Resistance coefficient
 	float ball_mass = 0.5f;                        // weight of ball
 
@@ -136,6 +136,8 @@ int main()
 			TimestepRemaining = TimestepRemaining - Timestep;
 
 			s = s_new;
+
+			if (TimestepRemaining < 0.05 * h)break;
 		}
 
 		n = n + 1;
